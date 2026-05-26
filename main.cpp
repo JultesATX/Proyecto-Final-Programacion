@@ -1,6 +1,6 @@
 /**
  * @file main.cpp
- * @brief Sistema de estudiantes con cursos usando EloquentORM y MySQL.
+ * @brief Sistema de control de cursos y estudiantes usando EloquentORM y MySQLConexion.
  * @author Julian
  * @date 2026
  */
@@ -27,7 +27,7 @@ bool id_existe(MySQLConexion &db, string tabla, int id) {
 }
 
 /**
- * @brief Tabla de cursos y estudiantes usando EloquentORM. Cada clase hereda de EloquentORM y define su tabla y columnas.
+ * @brief Tabla de cursos heredado de EloquentORM.
  */
 class Curso : public EloquentORM {
 public:
@@ -35,7 +35,7 @@ public:
 };
 
 /**
- * @brief Tabla de estudiantes con campos id, nombre, carnet y curso_id. Hereda de EloquentORM.
+ * @brief Tabla de estudiantes heredado de EloquentORM.
  */
 class Estudiante : public EloquentORM {
 public:
@@ -43,12 +43,12 @@ public:
 };
 
 /**
- * @brief Muestra todos los cursos
+ * @brief Lista de cursos.
  */
 void listar_cursos(MySQLConexion &db) {
     Curso c(db);
     vector<map<string, string>> regs = c.getAll();
-    cout << "\n--- LISTADO DE CURSOS ---" << endl;
+    cout << "\033[1;36m\n--- LISTADO DE CURSOS ---\033[0m" << endl;
     for (const auto &f : regs) cout << "ID: " << f.at("id") << " | Curso: " << f.at("nombre") << endl;
 }
 
@@ -58,7 +58,7 @@ void listar_cursos(MySQLConexion &db) {
 void gestionar_cursos(MySQLConexion &db) {
     int sub = 0;
     while (sub != 5) {
-        cout << "\n--- GESTION DE CURSOS ---" << endl;
+        cout << "\033[1;33m\n--- GESTION DE CURSOS ---\033[0m" << endl;
         cout << "1. Listar" << endl;
         cout << "2. Crear" << endl;
         cout << "3. Actualizar" << endl;
@@ -70,11 +70,11 @@ void gestionar_cursos(MySQLConexion &db) {
         else if (sub == 2) {
             int id; string nombre;
             cout << "Nuevo ID: "; cin >> id;
-            if (id_existe(db, "cursos", id)) cout << "Error: ID ya existe." << endl;
+            if (id_existe(db, "cursos", id)) cout << "\033[1;31mError: ID ya existe.\033[0m" << endl;
             else {
                 cout << "Nombre: "; cin.ignore(); getline(cin, nombre);
                 string q = "INSERT INTO cursos (id, nombre) VALUES (" + to_string(id) + ", '" + nombre + "')";
-                if (mysql_query(db.getConnection(), q.c_str()) == 0) cout << "Curso creado con éxito." << endl;
+                if (mysql_query(db.getConnection(), q.c_str()) == 0) cout << "\033[1;32mCurso creado con exito.\033[0m" << endl;
             }
         } 
         else if (sub == 3) {
@@ -85,25 +85,24 @@ void gestionar_cursos(MySQLConexion &db) {
                 cout << "Nuevo ID: "; cin >> n_id;
                 cout << "Nuevo nombre: "; cin.ignore(); getline(cin, nombre);
                 string q = "UPDATE cursos SET id = " + to_string(n_id) + ", nombre = '" + nombre + "' WHERE id = " + to_string(id);
-                if (mysql_query(db.getConnection(), q.c_str()) == 0) cout << "Curso actualizado con éxito." << endl;
-            }
-            else cout << "ID no encontrado." << endl;
+                if (mysql_query(db.getConnection(), q.c_str()) == 0) cout << "\033[1;32mCurso actualizado con exito.\033[0m" << endl;
+            } else cout << "\033[1;31mID no encontrado.\033[0m" << endl;
         } 
         else if (sub == 4) {
             int id; cout << "ID a eliminar: "; cin >> id;
             Curso c(db);
-            if (c.find(id) && c.remove()) cout << "Curso eliminado." << endl;
+            if (c.find(id) && c.remove()) cout << "\033[1;32mCurso eliminado.\033[0m" << endl;
         }
     }
 }
 
 /**
- * @brief Muestra todos los estudiantes
+ * @brief Lista estudiantes.
  */
 void listar_estudiantes(MySQLConexion &db) {
     Estudiante e(db);
     vector<map<string, string>> regs = e.getAll();
-    cout << "\n--- LISTADO DE ESTUDIANTES ---" << endl;
+    cout << "\033[1;36m\n--- LISTADO DE ESTUDIANTES ---\033[0m" << endl;
     for (const auto &f : regs) cout << "ID: " << f.at("id") << " | " << f.at("nombre") << " | Carnet: " << f.at("carnet") << endl;
 }
 
@@ -113,7 +112,7 @@ void listar_estudiantes(MySQLConexion &db) {
 void gestionar_estudiantes(MySQLConexion &db) {
     int sub = 0;
     while (sub != 5) {
-        cout << "\n--- GESTION DE ESTUDIANTES ---" << endl;
+        cout << "\033[1;33m\n--- GESTION DE ESTUDIANTES ---\033[0m" << endl;
         cout << "1. Listar" << endl;
         cout << "2. Crear" << endl;
         cout << "3. Actualizar" << endl;
@@ -125,13 +124,13 @@ void gestionar_estudiantes(MySQLConexion &db) {
         else if (sub == 2) {
             int id; string n, car, cid;
             cout << "Nuevo ID: "; cin >> id;
-            if (id_existe(db, "estudiantes", id)) cout << "Error: ID ya existe." << endl;
+            if (id_existe(db, "estudiantes", id)) cout << "\033[1;31mError: ID ya existe.\033[0m" << endl;
             else {
                 cout << "Nombre: "; cin.ignore(); getline(cin, n);
                 cout << "Carnet: "; getline(cin, car);
                 cout << "ID curso: "; getline(cin, cid);
                 string q = "INSERT INTO estudiantes (id, nombre, carnet, curso_id) VALUES (" + to_string(id) + ", '" + n + "', '" + car + "', '" + cid + "')";
-                if (mysql_query(db.getConnection(), q.c_str()) == 0) cout << "Estudiante creado con éxito." << endl;
+                if (mysql_query(db.getConnection(), q.c_str()) == 0) cout << "\033[1;32mEstudiante creado con exito.\033[0m" << endl;
             }
         } 
         else if (sub == 3) {
@@ -144,27 +143,26 @@ void gestionar_estudiantes(MySQLConexion &db) {
                 cout << "Nuevo carnet: "; getline(cin, car);
                 cout << "Nuevo ID curso: "; getline(cin, cid);
                 string q = "UPDATE estudiantes SET id = " + to_string(n_id) + ", nombre = '" + n + "', carnet = '" + car + "', curso_id = '" + cid + "' WHERE id = " + to_string(id);
-                if (mysql_query(db.getConnection(), q.c_str()) == 0) cout << "Estudiante actualizado con éxito." << endl;
-            } else cout << "ID no encontrado." << endl;
+                if (mysql_query(db.getConnection(), q.c_str()) == 0) cout << "\033[1;32mEstudiante actualizado con exito.\033[0m" << endl;
+            } else cout << "\033[1;31mID no encontrado.\033[0m" << endl;
         } 
         else if (sub == 4) {
             int id; cout << "ID a eliminar: "; cin >> id;
             Estudiante e(db);
-            if (e.find(id) && e.remove()) cout << "Estudiante eliminado." << endl;
+            if (e.find(id) && e.remove()) cout << "\033[1;32mEstudiante eliminado.\033[0m" << endl;
         }
     }
 }
-/**
- * @brief Función principal con menu para gestionar cursos y estudiantes. Se conecta a la base de datos,
- *  muestra el menú principal y llama a las funciones de gestión correspondientes.
- */
 
+/**
+ * @brief Función principal del programa.
+ */
 int main() {
     MySQLConexion db("root", "admin", "proyectofinal", "localhost", 3306);
     if (!db.open()) return 1;
     int opcion = 0;
     while (opcion != 3) {
-        cout << "\n--- SISTEMA DE CONTROL ACADEMICO ---" << endl;
+        cout << "\033[1;35m\n--- SISTEMA DE CONTROL ACADEMICO ---\033[0m" << endl;
         cout << "1. Gestionar Cursos" << endl;
         cout << "2. Gestionar Estudiantes" << endl;
         cout << "3. Salir" << endl;
