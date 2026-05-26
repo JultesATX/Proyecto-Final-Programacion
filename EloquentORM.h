@@ -147,7 +147,7 @@ public:
     }
     
     /**
-     * @brief Actualiza el registro actual (requiere que 'id' esté definido).
+     * @brief Actualiza el registro actual (requiere que el ID esté definido).
      *
      * @return true Si la actualización fue exitosa.
      * @return false En caso de error.
@@ -176,7 +176,7 @@ public:
     }
     
     /**
-     * @brief Elimina el registro actual (requiere que 'id' esté definido).
+     * @brief Elimina el registro actual (requiere que el ID esté definido).
      *
      * @return true Si la eliminación fue exitosa.
      * @return false En caso de error.
